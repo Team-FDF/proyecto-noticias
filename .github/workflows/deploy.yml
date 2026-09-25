@@ -1,0 +1,28 @@
+name: Deploy automático a cPanel
+
+on:
+  push:
+    branches:
+      - main # Se ejecuta cada vez que haces git push a la rama main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Descargar tu código
+        uses: actions/checkout@v4
+
+      # OPCIONAL: Si usas Composer (PHP), descomenta estas 2 líneas para que GitHub instale las librerías por ti:
+      # - name: Instalar dependencias de Composer
+      #   run: composer install --no-dev --optimize-autoloader
+
+      - name: 2. Sincronizar archivos con cPanel
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          exclude: |
+            */.git
+            */.git/**
+            **/.env
